@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from PIL import Image
 
 def openTraining():
     fImages = open("MNIST-train-images", "rb")
@@ -14,7 +15,7 @@ def openTraining():
         retImages[i] = np.reshape(np.frombuffer(fImages.read(28 * 28), dtype=np.uint8), (28,28,1))
         retLabels[i] = fLabels.read(1)[0]
 
-    return (retImages.astype(np.float16), retLabels)
+    return ((retImages/255.).astype(np.float32), retLabels)
 
 def openTest():
     fImages = open("MNIST-test-images", "rb")
@@ -29,7 +30,7 @@ def openTest():
         retImages[i] = np.reshape(np.frombuffer(fImages.read(28 * 28), dtype=np.uint8), (28,28,1))
         retLabels[i] = fLabels.read(1)[0]
 
-    return (retImages, retLabels)
+    return ((retImages/255.).astype(np.float32), retLabels)
 
 
 def trainModel(images, labels):
@@ -48,10 +49,13 @@ def trainModel(images, labels):
     model.fit(images, labels, 64, 5)
 
     return model
-   
+
 
 if __name__ == "__main__":
-    tf.config.list_physical_devices('GPU')
+    img = np.array(Image.open("test_input.bmp").getchannel("R"))
+    img = np.expand_dims(img, 0)
+    img = np.expand_dims(img, 3)
+
 
     print("Opening training data...")
     (images, labels) = openTraining()
@@ -68,3 +72,5 @@ if __name__ == "__main__":
     print("Evaluating model on test data...")
     loss, acc = model.evaluate(images, labels)
     print("Acc: ", acc)
+
+    print("This image contains a ", model.predict((img/255.).astype(np.float32), 1).argmax())

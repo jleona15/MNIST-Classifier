@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+MNIST-test-images
+MNIST-test-labels
+MNIST-train-images
+MNIST-train-labels
+/MNIST Classifier/Untitled.bmp
